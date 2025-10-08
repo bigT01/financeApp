@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function CameraComponent() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
