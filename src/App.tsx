@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import NumericKeyboard from './components/NumericKeyboard'
+import CameraComponent from './components/CameraComponent';
 
 function App() {
     const [open, setOpen] = useState(false);
@@ -23,6 +24,8 @@ function App() {
           onClose={() => setOpen(false)}
           onInput={handleInput}
         />
+        
+        <CameraComponent/>
       </div>
     )
 }
