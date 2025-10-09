@@ -17,7 +17,7 @@ function App() {
           <p onClick={() => setOpen(true)} className="text-2xl mb-4">{value && '€'}{value || "Expance"}</p>
         </div>
 
-        <select defaultValue={""} className='w-full outline-none h-12 border-b border-gray-300'>
+        <select defaultValue={""} className='w-full text-2xl outline-none h-12 border-b border-gray-300'>
           <option value={''}>Category</option>
           <option value={'Market'}>Market</option>
           <option value={'Clothes'}>Clothes</option>
