@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import './App.css'
 import NumericKeyboard from './components/NumericKeyboard'
-import CameraComponent from './components/CameraComponent';
 
 function App() {
     const [open, setOpen] = useState(false);
@@ -17,6 +16,14 @@ function App() {
         <div className='w-full h-12 border-b border-gray-300'>
           <p onClick={() => setOpen(true)} className="text-2xl mb-4">{value && '€'}{value || "Expance"}</p>
         </div>
+
+        <select defaultValue={""} className='w-full outline-none h-12 border-b border-gray-300'>
+          <option value={''}>Category</option>
+          <option value={'Market'}>Market</option>
+          <option value={'Clothes'}>Clothes</option>
+          <option value={'Eat outside'}>Eat outside</option>
+          <option value={'Subscription'}>Subscription</option>
+        </select>
         
 
         <NumericKeyboard
@@ -25,7 +32,7 @@ function App() {
           onInput={handleInput}
         />
         
-        <CameraComponent/>
+        {/* <CameraComponent/> */}
       </div>
     )
 }
