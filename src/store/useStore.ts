@@ -14,6 +14,7 @@ export const useStore = create<IState>()(
       (set, get) => ({
         categories: [],
         transactions: [],
+        loading: {name:  null, status: false},
         // --- category actions ---
         getAllCategories: () => getAllCategories(set),
         createCategory: (data: Partial<ICategory>) => createCategory(set, get, data),

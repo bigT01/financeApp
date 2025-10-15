@@ -1,6 +1,7 @@
 export interface IState {
     categories: ICategory[];
     transactions: ITransaction[];
+    loading: {name: "CREATE_TRANSACTION" | null, status: boolean}
 
     // --- CATEGORY ---
     getAllCategories: () => Promise<void>;

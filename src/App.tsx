@@ -6,6 +6,7 @@ import { useStore } from './store/useStore';
 
 function App() {
     const categories = useStore((state: IState) => state.categories);
+    const loading = useStore((state: IState) => state.loading);
 
     const getAllCategories = useStore((state: IState) => state.getAllCategories);
     const createTransaction = useStore((state: IState) => state.createTransaction);
@@ -76,7 +77,7 @@ function App() {
         />
         <div className='w-full flex justify-center mt-50'>
           <button onClick={() => onSave()} className="px-4 py-2 rounded-full text-2xl min-w-[150px] bg-green-600 text-white font-medium">
-            Save
+            {loading.status && loading.name === "CREATE_TRANSACTION" ? "Saving" : "Save"}
           </button>
         </div>
         
