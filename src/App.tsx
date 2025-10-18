@@ -1,71 +1,45 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import NumericKeyboard from './components/NumericKeyboard'
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import type { IState } from './constants/interface';
 import { useStore } from './store/useStore';
 
+
 function App() {
-    const categories = useStore((state: IState) => state.categories);
-    const loading = useStore((state: IState) => state.loading);
-
-    const getAllCategories = useStore((state: IState) => state.getAllCategories);
-    const createTransaction = useStore((state: IState) => state.createTransaction);
-
+    const transactions = useStore((state: IState) => state.transactions);
+    const getAllTransactions = useStore((state: IState) => state.getAllTransactions);
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
-    const [category, setCategory] = useState("");
-
-    const handleInput = (input: string) => {
-      setValue(input);
-  };
-
-    const onSave = () => {
-      if(Number(category) && Number(value) > 0) {
-        createTransaction({
-          amount: Number(value),
-          category: categories.find((item) => item.id === Number(category)),
-          description: '',
-        })
-      }
-      
-      setValue("")
-      setCategory("")
-    }
 
     useEffect(() => {
-      getAllCategories()
-    },[])
+      getAllTransactions();
+    }, [])
+
     return (
       <div className="container relative p-4 h-screen bg-gray-100">
-        <div className='w-full h-12 border-b border-gray-300'>
-          <p onClick={() => setOpen(true)} className="text-2xl mb-4">{value && '€'}{value || "Expance"}</p>
-        </div>
-
-        {categories.length > 0 && (
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className='w-full text-2xl outline-none h-12 border-b border-gray-300'>
-            <option value={''}>Category</option>
-            {categories.map((item) => (
-              <option value={item.id}>{item.name}</option>
+        <table className='w-full mb-20'>
+          <thead>
+            <tr className='border-b border-gray-300'>
+              <th className='text-left p-2'>Category</th>
+              <th className='text-right p-2'>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions && transactions.map(transaction => (
+              <tr key={transaction.id} className='border-b border-gray-200'>
+                <td className='p-2'>{transaction.category ? transaction.category.name : "No Category"}</td>
+                <td className='p-2 text-right'>€{transaction.amount}</td>
+              </tr>
             ))}
-          </select>
-        )}
-        
-        
-
+          </tbody>
+        </table>
         <NumericKeyboard
           isOpen={open}
           onClose={() => setOpen(false)}
-          onInput={handleInput}
         />
-        <div className='w-full flex justify-center mt-50'>
-          <button onClick={() => onSave()} className="px-4 py-2 rounded-full text-2xl min-w-[150px] bg-green-600 text-white font-medium">
-            {loading.status && loading.name === "CREATE_TRANSACTION" ? "Saving" : "Save"}
-          </button>
-        </div>
-        
         {/* <CameraComponent/> */}
-        <nav>
-
+        <nav className='fixed bottom-10 w-[90%] rounded-2xl bg-gray-900 flex items-center px-2 justify-center h-[48px]'>
+          <button onClick={() => setOpen(true)}><IoMdAddCircleOutline size={40} color='#FFFFFF'/></button>
         </nav>  
       </div>
     )

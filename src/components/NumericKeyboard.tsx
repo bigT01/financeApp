@@ -1,24 +1,41 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CategorySelect from "./select/categorySelect";
+import type { IState } from "../constants/interface";
+import { useStore } from "../store/useStore";
 
 interface NumericKeyboardProps {
   isOpen: boolean;
   onClose: () => void;
-  onInput: (value: string) => void;
 }
 
 export default function NumericKeyboard({
   isOpen,
   onClose,
-  onInput,
 }: NumericKeyboardProps) {
+  const categories = useStore((state: IState) => state.categories);
+  const createTransaction = useStore((state: IState) => state.createTransaction);
+
   const [value, setValue] = useState("")
+  const [category, setCategory] = useState("")
   // Новая раскладка: 1-9, '.', '0', '←', 'OK' (12 кнопок)
   // Кнопка '.' добавлена на место '0'. '0' теперь на месте '←'.
   // ← и OK остались, как были.
-  const buttons = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "←", "OK"];
+  const buttons = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "←", "Save"];
 
+  const onSave = () => {
+      if(Number(category) && Number(value) > 0) {
+        createTransaction({
+          amount: Number(value),
+          category: categories.find((item) => item.id === Number(category)),
+          description: "",
+        })
+      }
+      
+      setValue("")
+      setCategory("")
+      onClose();
+    }
   // Логика обработки нажатий
   const handleInput = (input: string) => {
     switch (input) {
@@ -26,10 +43,8 @@ export default function NumericKeyboard({
         // Удалить последний символ
         setValue(prev => prev.slice(0, -1));
         break;
-      case "OK":
-        // Подтвердить ввод и закрыть клавиатуру
-        onClose();
-        // onClose(); // Вызвать закрытие, если бы оно было доступно здесь
+      case "Save":
+        onSave();
         break;
       default:
         // Добавить цифру или точку
@@ -41,10 +56,6 @@ export default function NumericKeyboard({
         break;
     }
   };
-
-  useEffect(() => {
-    onInput(value);
-  }, [value])
 
   return (
     <AnimatePresence>
@@ -67,9 +78,10 @@ export default function NumericKeyboard({
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
           >
-            <CategorySelect />
+            <CategorySelect onHandleChange={e => setCategory(e)}/>
             <p className="text-center mb-2 opacity-40">Expenses</p>
             <p className="bg-gray-800 w-full text-center p-4 text-4xl rounded-2xl mb-4"><span className={value ? "opacity-100" : "opacity-50"}>€</span>{value}</p>
+
             <div className="grid grid-cols-3 gap-3">
               {/* Используем кнопку "." вместо "0" в третьем ряду. 
                   Перемещаем "0" и "←" в нижний ряд.
@@ -79,7 +91,7 @@ export default function NumericKeyboard({
                   key={btn}
                   onClick={() => handleInput(btn)}
                   className={`py-4 text-xl font-semibold rounded-2xl ${
-                    btn === "OK"
+                    btn === "Save"
                       ? "bg-green-500 text-white w-full col-span-3"
                       : btn === "←"
                       ? "bg-gray-700"
