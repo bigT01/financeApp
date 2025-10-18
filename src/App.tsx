@@ -16,25 +16,7 @@ function App() {
     const [category, setCategory] = useState("");
 
     const handleInput = (input: string) => {
-    switch (input) {
-      case "←":
-        // Удалить последний символ
-        setValue(prev => prev.slice(0, -1));
-        break;
-      case "OK":
-        // Подтвердить ввод и закрыть клавиатуру
-        setOpen(false);
-        // onClose(); // Вызвать закрытие, если бы оно было доступно здесь
-        break;
-      default:
-        // Добавить цифру или точку
-        // Можно добавить здесь логику, чтобы не допустить две точки
-        if (input === '.' && value.includes('.')) {
-          return; 
-        }
-        setValue(prev => prev + input);
-        break;
-    }
+      setValue(input);
   };
 
     const onSave = () => {

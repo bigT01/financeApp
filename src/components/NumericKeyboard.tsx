@@ -1,4 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import CategorySelect from "./select/categorySelect";
 
 interface NumericKeyboardProps {
   isOpen: boolean;
@@ -11,22 +13,38 @@ export default function NumericKeyboard({
   onClose,
   onInput,
 }: NumericKeyboardProps) {
+  const [value, setValue] = useState("")
   // Новая раскладка: 1-9, '.', '0', '←', 'OK' (12 кнопок)
   // Кнопка '.' добавлена на место '0'. '0' теперь на месте '←'.
   // ← и OK остались, как были.
   const buttons = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "←", "OK"];
 
   // Логика обработки нажатий
-  const handleButtonClick = (btn: string) => {
-    // Используем пропс onInput для всех действий.
-    // Это сохраняет исходный интерфейс компонента.
-    onInput(btn);
-    
-    // Внимание: Если вам нужна разная логика (например, закрыть клавиатуру
-    // при нажатии OK) в родительском компоненте, вам нужно будет 
-    // обрабатывать эти специальные строки ('←', 'OK', '.')
-    // в родительском компоненте, используя if/switch.
+  const handleInput = (input: string) => {
+    switch (input) {
+      case "←":
+        // Удалить последний символ
+        setValue(prev => prev.slice(0, -1));
+        break;
+      case "OK":
+        // Подтвердить ввод и закрыть клавиатуру
+        onClose();
+        // onClose(); // Вызвать закрытие, если бы оно было доступно здесь
+        break;
+      default:
+        // Добавить цифру или точку
+        // Можно добавить здесь логику, чтобы не допустить две точки
+        if (input === '.' && value.includes('.')) {
+          return; 
+        }
+        setValue(prev => prev + input);
+        break;
+    }
   };
+
+  useEffect(() => {
+    onInput(value);
+  }, [value])
 
   return (
     <AnimatePresence>
@@ -49,6 +67,9 @@ export default function NumericKeyboard({
             exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
           >
+            <CategorySelect />
+            <p className="text-center mb-2 opacity-40">Expenses</p>
+            <p className="bg-gray-800 w-full text-center p-4 text-4xl rounded-2xl mb-4"><span className={value ? "opacity-100" : "opacity-50"}>€</span>{value}</p>
             <div className="grid grid-cols-3 gap-3">
               {/* Используем кнопку "." вместо "0" в третьем ряду. 
                   Перемещаем "0" и "←" в нижний ряд.
@@ -56,7 +77,7 @@ export default function NumericKeyboard({
               {buttons.map((btn) => (
                 <button
                   key={btn}
-                  onClick={() => handleButtonClick(btn)}
+                  onClick={() => handleInput(btn)}
                   className={`py-4 text-xl font-semibold rounded-2xl ${
                     btn === "OK"
                       ? "bg-green-500 text-white w-full col-span-3"
